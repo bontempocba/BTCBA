@@ -3,347 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bontempo | Controle de Assistências</title>
+    <title>Bontempo | Agenda Técnica</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .bg-bontempo { background-color: #111111 !important; }
-        .btn-bontempo { background-color: #111111; color: #fff; }
-        .btn-bontempo:hover { background-color: #333; color: #fff; }
-        .card-indicador { border: none; border-radius: 10px; color: #fff; transition: transform 0.2s; }
-        .card-indicador:hover { transform: translateY(-3px); }
-        .login-container { max-width: 400px; margin-top: 10%; background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        body { background-color: #f3f4f6; font-family: 'Segoe UI', system-ui, sans-serif; overflow-x: hidden; }
+        .sidebar { width: 240px; background: #fff; height: 100vh; position: fixed; top: 0; left: 0; border-right: 1px solid #e5e7eb; padding: 20px 15px; }
+        .main-content { margin-left: 240px; padding: 20px; min-height: 100vh; }
+        .logo-space { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: #111; margin-bottom: 30px; border-bottom: 2px solid #111; padding-bottom: 10px; }
+        .nav-menu .nav-link { color: #4b5563; font-weight: 500; padding: 10px 15px; border-radius: 8px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; transition: all 0.2s; text-decoration: none; }
+        .nav-menu .nav-link:hover, .nav-menu .nav-link.active { background-color: #eff6ff; color: #2563eb; }
+        .nav-menu .nav-link.btn-sair { color: #dc2626; margin-top: 40px; }
+        .nav-menu .nav-link.btn-sair:hover { background-color: #fef2f2; }
+        
+        /* Grade da Agenda Estilo Solução */
+        .agenda-grid { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; overflow-x: auto; margin-top: 20px; }
+        .agenda-col { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; min-height: 500px; padding: 10px; }
+        .agenda-header { text-align: center; padding-bottom: 10px; border-bottom: 2px solid #f3f4f6; margin-bottom: 12px; }
+        .agenda-header .dia-semana { font-size: 11px; font-weight: 700; color: #9ca3af; text-uppercase: true; }
+        .agenda-header .dia-data { font-size: 16px; font-weight: 800; color: #1f2937; }
+        
+        /* Cards Técnicos */
+        .os-card { background: #fdfdfd; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border-left: 4px solid #2563eb; transition: transform 0.2s; }
+        .os-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .os-tecnico { font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase; margin-bottom: 5px; }
+        .os-cliente { font-size: 13px; font-weight: 700; color: #1f2937; margin-bottom: 2px; }
+        .os-info { font-size: 11px; color: #64748b; margin-bottom: 6px; line-height: 1.3; }
+        .os-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; display: inline-block; }
+        .badge-confirmado { background-color: #dbeafe; color: #1e40af; }
+        .badge-viagem { background-color: #dcfce7; color: #166534; }
+        .badge-andamento { background-color: #fef9c3; color: #854d0e; }
+        
         .hidden-section { display: none !important; }
-        .table-responsive { background: #fff; border-radius: 8px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .login-box { max-width: 380px; margin: 10% auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
-    <div id="sectionLogin" class="container d-flex justify-content-center">
-        <div class="login-container text-center w-100">
-            <h3 class="fw-bold text-dark mb-1">BONTEMPO</h3>
-            <p class="text-muted small mb-4">Assistência Técnica & Logística</p>
-            <div id="erroLogin" class="alert alert-danger small py-2 d-none">Usuário ou senha incorretos!</div>
+    <!-- TELA DE LOGIN -->
+    <div id="sectionLogin" class="container">
+        <div class="login-box text-center">
+            <h3 class="fw-bold mb-1">BONTEMPO</h3>
+            <p class="text-muted small mb-4">Controle de Engenharia & Montagem</p>
+            <div id="erroLogin" class="alert alert-danger small d-none">Usuário ou senha incorretos.</div>
             <form id="formLogin">
                 <div class="mb-3 text-start">
                     <label class="form-label small fw-bold">Usuário</label>
-                    <input type="text" id="inputUser" class="form-control" required placeholder="Ex: gestor ou tecnico">
+                    <input type="text" id="inputUser" class="form-control" placeholder="gestor ou tecnico" required>
                 </div>
                 <div class="mb-4 text-start">
                     <label class="form-label small fw-bold">Senha</label>
-                    <input type="password" id="inputPass" class="form-control" required placeholder="••••">
+                    <input type="password" id="inputPass" class="form-control" placeholder="••••" required>
                 </div>
-                <button type="submit" class="btn btn-bontempo w-100 py-2 fw-bold">Entrar no Sistema</button>
+                <button type="submit" class="btn btn-dark w-100 fw-bold py-2">Acessar Agenda</button>
             </form>
         </div>
     </div>
 
+    <!-- PAINEL GESTOR (ESTILO SOLUÇÃO AUTOMAÇÃO) -->
     <div id="sectionGestor" class="hidden-section">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-bontempo shadow-sm mb-4">
-            <div class="container-fluid px-4">
-                <a class="navbar-brand fw-bold" href="#">Bontempo | Controle de Assistências</a>
-                <button class="btn btn-sm btn-outline-light" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+        <!-- BARRA LATERAL -->
+        <div class="sidebar">
+            <div class="logo-space text-center">BONTEMPO</div>
+            <div class="nav-menu">
+                <a href="#" class="nav-link active"><i class="fa-solid fa-calendar-days"></i> Agenda Técnica</a>
+                <a href="#" class="nav-link"><i class="fa-solid fa-clock-history"></i> Histórico Vistorias</a>
+                <a href="#" class="nav-link"><i class="fa-solid fa-users"></i> Equipes / Técnicos</a>
+                <a href="#" class="nav-link btn-sair" onclick="logout()"><i class="fa-solid fa-arrow-left-long"></i> Sair</a>
             </div>
-        </nav>
+        </div>
 
-        <div class="container-fluid px-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-bold text-secondary mb-0">Monitoramento de Visitas Externas</h4>
-                <button class="btn btn-bontempo fw-bold" data-bs-toggle="modal" data-bs-target="#modalNovaOS">
-                    <i class="fa-solid fa-plus"></i> Agendar Nova Assistência
-                </button>
-            </div>
-
-            <div class="row g-3 mb-4">
-                <div class="col-6 col-md-3">
-                    <div class="card-indicador p-3 bg-primary">
-                        <small class="d-block text-uppercase fw-bold opacity-75">Em Atendimento</small>
-                        <h2 id="countEmAtendimento" class="fw-bold m-0">0</h2>
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="main-content">
+            <!-- Topo com Filtros e Ações -->
+            <div class="card p-3 border-0 shadow-sm mb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-left"></i></button>
+                        <span class="fw-bold text-dark mx-2">Semana Atual de Atendimentos</span>
+                        <button class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-right"></i></button>
                     </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card-indicador p-3 bg-warning text-dark">
-                        <small class="d-block text-uppercase fw-bold opacity-75">Aguardando Peça</small>
-                        <h2 id="countAguardandoPeca" class="fw-bold m-0">0</h2>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card-indicador p-3 bg-success">
-                        <small class="d-block text-uppercase fw-bold opacity-75">Concluídas (Mês)</small>
-                        <h2 id="countConcluidas" class="fw-bold m-0">0</h2>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card-indicador p-3 bg-secondary">
-                        <small class="d-block text-uppercase fw-bold opacity-75">Total Agendado</small>
-                        <h2 id="countTotal" class="fw-bold m-0">0</h2>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalNovaOS">
+                            <i class="fa-solid fa-plus"></i> Novo Agendamento
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>OS</th>
-                            <th>Cliente / Endereço</th>
-                            <th>Técnico Responsável</th>
-                            <th>Status</th>
-                            <th>Ações / Relatório</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbodyGestor">
-                        </tbody>
-                </table>
+            <!-- GRADE SEMANAL (KANBAN) -->
+            <div class="agenda-grid">
+                <!-- SEGUNDA -->
+                <div class="agenda-col">
+                    <div class="agenda-header">
+                        <div class="dia-semana">SEGUNDA</div>
+                        <div class="dia-data">08/06</div>
+                    </div>
+                    <div id="col-2026-06-08"></div>
+                </div>
+                <!-- TERÇA -->
+                <div class="agenda-col">
+                    <div class="agenda-header">
+                        <div class="dia-semana">TERÇA</div>
+                        <div class="dia-data">09/06</div>
+                    </div>
+                    <div id="col-2026-06-09"></div>
+                </div>
+                <!-- QUARTA -->
+                <div class="agenda-col">
+                    <div class="agenda-header">
+                        <div class="dia-semana">QUARTA</div>
+                        <div class="dia-data">10/06</div>
+                    </div>
+                    <div id="col-2026-06-10"></div>
+                </div>
+                <!-- QUINTA -->
+                <div class="agenda-col">
+                    <div class="agenda-header">
+                        <div class="dia-semana">QUINTA</div>
+                        <div class="dia-data">11/06</div>
+                    </div>
+                    <div id="col-2026-06-11"></div>
+                </div>
+                <!-- SEXTA -->
+                <div class="agenda-col">
+                    <div class="agenda-header">
+                        <div class="dia-semana">SEXTA</div>
+                        <div class="dia-data">12/06</div>
+                    </div>
+                    <div id="col-2026-06-12"></div>
+                </div>
+                <!-- SÁBADO -->
+                <div class="agenda-col">
+                    <div class="agenda-header">
+                        <div class="dia-semana">SÁBADO</div>
+                        <div class="dia-data">13/06</div>
+                    </div>
+                    <div id="col-2026-06-13"></div>
+                </div>
+                <!-- DOMINGO -->
+                <div class="agenda-col">
+                    <div class="agenda-header">
+                        <div class="dia-semana">DOMINGO</div>
+                        <div class="dia-data">14/06</div>
+                    </div>
+                    <div id="col-2026-06-14"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="sectionTecnico" class="hidden-section">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-bontempo shadow-sm mb-4">
-            <div class="container-fluid px-4">
-                <a class="navbar-brand fw-bold" href="#">Bontempo | Área do Técnico</a>
-                <button class="btn btn-sm btn-outline-light" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
-            </div>
-        </nav>
-
-        <div class="container px-3">
-            <h4 class="fw-bold text-dark mb-3"><i class="fa-solid fa-list-check text-secondary"></i> Minhas Ordens de Serviço</h4>
-            <div id="listaOSTecnico" class="row g-3">
-                </div>
+    <!-- PAINEL DO TÉCNICO -->
+    <div id="sectionTecnico" class="hidden-section container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold m-0">Minhas Vistorias</h4>
+            <button class="btn btn-sm btn-outline-danger" onclick="logout()">Sair</button>
         </div>
+        <div id="listaOSTecnico" class="row g-3"></div>
     </div>
 
+    <!-- MODAL: NOVO AGENDAMENTO -->
     <div class="modal fade" id="modalNovaOS" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <form id="formNovaOS" class="modal-content">
-                <div class="modal-header bg-bontempo text-white">
-                    <h5 class="modal-title fw-bold">Agendar Nova Assistência</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-with="modal" data-bs-dismiss="modal"></button>
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold">Criar Compromisso Técnico</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-6">
-                            <label class="form-label small fw-bold">Número da OS</label>
-                            <input type="text" id="novaOSNum" class="form-control" required placeholder="Ex: #004">
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label small fw-bold">Técnico Responsável</label>
-                            <select id="novaOSTecnico" class="form-select" required>
-                                <option value="Rafael Souza">Rafael Souza</option>
-                                <option value="Luiz Fabrício">Luiz Fabrício</option>
-                                <option value="Ênio Oliveira">Ênio Oliveira</option>
-                            </select>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Cliente e Localização</label>
-                            <input type="text" id="novaOSCliente" class="form-control" required placeholder="Nome do cliente e apartamento/casa">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small fw-bold">Instruções Técnicas / Projeto</label>
-                            <textarea id="novaOSInstrucoes" class="form-control" rows="3" placeholder="O que deve ser executado no local..."></textarea>
-                        </div>
+                <div class="modal-body row g-3">
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Data do Atendimento</label>
+                        <input type="date" id="novaOSData" class="form-control" required>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small fw-bold">Número OS</label>
+                        <input type="text" id="novaOSNum" class="form-control" placeholder="#001" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-bold">Técnico Responsável</label>
+                        <select id="novaOSTecnico" class="form-select" required>
+                            <option value="Rafael Souza">Rafael Souza</option>
+                            <option value="Luiz Fabrício">Luiz Fabrício</option>
+                            <option value="Ênio Oliveira">Ênio Oliveira</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-bold">Cliente / Endereço</label>
+                        <input type="text" id="novaOSCliente" class="form-control" placeholder="Nome do cliente e detalhes" required>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label small fw-bold">Especificações do Serviço</label>
+                        <textarea id="novaOSInstrucoes" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-bontempo btn-sm px-3 fw-bold">Salvar na Agenda</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
+                    <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold">Agendar na Grade</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL: RELATÓRIO DO GESTOR -->
     <div class="modal fade" id="modalVerRelatorio" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold" id="relModalTitulo">Relatório Técnico</h5>
+                    <h5 class="modal-title fw-bold">Detalhes da Assistência</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="mb-2"><strong>Cliente:</strong> <span id="relModalCliente"></span></p>
-                    <p class="mb-2"><strong>Instruções Iniciais:</strong> <span id="relModalInstrucoes"></span></p>
+                    <p class="mb-1"><strong>Cliente:</strong> <span id="relModalCliente"></span></p>
+                    <p class="mb-3 text-muted small"><strong>Instruções:</strong> <span id="relModalInstrucoes"></span></p>
                     <hr>
-                    <p class="mb-2 text-primary"><strong><i class="fa-regular fa-clock"></i> Início do Atendimento:</strong> <span id="relModalInicio"></span></p>
-                    <p class="mb-2"><strong><i class="fa-regular fa-file-text"></i> Relatório de Campo:</strong></p>
-                    <div class="p-3 bg-light rounded text-muted small border mb-3" id="relModalTexto" style="white-space: pre-wrap;"></div>
+                    <p class="mb-2"><strong>Relatório do Técnico:</strong></p>
+                    <div class="p-3 bg-light rounded small text-muted border mb-3" id="relModalTexto"></div>
                     <div id="relModalAreaFoto" class="text-center d-none">
-                        <a id="relModalLinkFoto" href="#" target="_blank" class="btn btn-sm btn-outline-dark"><i class="fa-solid fa-image"></i> Ver Foto Anexada da Obra</a>
+                        <a id="relModalLinkFoto" href="#" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-image"></i> Abrir Imagem da Obra</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modalExecutarOS" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen-sm-down">
-            <form id="formFinalizarOS" class="modal-content">
-                <div class="modal-header bg-bontempo text-white">
-                    <h5 class="modal-title fw-bold" id="execModalTitulo">Atendimento</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="execModalId">
-                    <p class="mb-1"><strong>Cliente:</strong> <span id="execModalCliente"></span></p>
-                    <p class="mb-3 text-muted small"><strong>Instruções:</strong> <span id="execModalInstrucoes"></span></p>
-                    
-                    <div id="areaIniciarAtendimento" class="text-center my-4">
-                        <button type="button" class="btn btn-primary btn-lg w-100 fw-bold py-3 shadow-sm" onclick="iniciarAtendimentoNoLocal()">
-                            <i class="fa-solid fa-location-dot"></i> CONFIRMAR CHEGADA NO CLIENTE
-                        </button>
-                    </div>
-
-                    <div id="areaFormularioFinalizar" class="d-none">
-                        <div class="alert alert-success small py-2"><i class="fa-regular fa-clock"></i> Atendimento iniciado neste local.</div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Como ficou o status final da assistência?</label>
-                            <select id="execStatusFinal" class="form-select" required>
-                                <option value="Concluído">Concluído (Tudo Resolvido)</option>
-                                <option value="Aguardando Peça">Aguardando Peça / Fábrica</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Relatório de Visita (O que foi feito?)</label>
-                            <textarea id="execTextoRelatorio" class="form-control" rows="4" required placeholder="Descreva os ajustes realizados, peças faltantes ou status da montagem..."></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Foto da Vistoria / Assistência (Opcional)</label>
-                            <input type="file" id="execFoto" class="form-control" accept="image/*">
-                        </div>
-                        <button type="submit" class="btn btn-success w-100 py-2 fw-bold"><i class="fa-solid fa-cloud-arrow-up"></i> Enviar Relatório ao Gestor</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <script>
-        // CONFIGURAÇÃO DO SEU BANCO SUPABASE
         const SUPABASE_URL = "https://bowvhtfofaeykibuqqeo.supabase.co";
-        // Usando a chave anon pública padrão para conexões client-side diretas
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJvd3ZodGZvZmFleWtpYnVxcWVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTgxMDExNDMsImV4cCI6MjAzMzczMTE0M30.YOUR_PUBLIC_KEY"; 
-        
-        // Inicializa o cliente do Supabase de forma global
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let usuarioLogado = null;
-        let cargoLogado = null;
 
-        // Controle de Login simples e direto puxando da tabela do banco
-        document.getElementById('formLogin').addEventListener('submit', async function(e) {
+        document.getElementById('formLogin').addEventListener('submit', function(e) {
             e.preventDefault();
             const user = document.getElementById('inputUser').value.trim();
-            const pass = document.getElementById('inputPass').value.trim();
-            
-            // Simulação rápida para agilizar teste, ou consulta direta
-            if((user === 'gestor' || user === 'tecnico') && pass === '1234') {
-                usuarioLogado = user === 'gestor' ? 'Gestor Geral' : 'Rafael Souza';
-                cargoLogado = user;
+            if(user === 'gestor') {
+                usuarioLogado = 'Gestor';
                 document.getElementById('sectionLogin').classList.add('hidden-section');
-                if(cargoLogado === 'gestor') {
-                    document.getElementById('sectionGestor').classList.remove('hidden-section');
-                    carregarDadosGestor();
-                } else {
-                    document.getElementById('sectionTecnico').classList.remove('hidden-section');
-                    carregarDadosTecnico();
-                }
+                document.getElementById('sectionGestor').classList.remove('hidden-section');
+                carregarGradeSemanal();
+            } else if (user === 'tecnico') {
+                usuarioLogado = 'Rafael Souza';
+                document.getElementById('sectionLogin').classList.add('hidden-section');
+                document.getElementById('sectionTecnico').classList.remove('hidden-section');
+                carregarDadosTecnico();
             } else {
                 document.getElementById('erroLogin').classList.remove('d-none');
             }
         });
 
         function logout() {
-            usuarioLogado = null;
-            cargoLogado = null;
-            document.getElementById('sectionGestor').classList.add('hidden-section');
-            document.getElementById('sectionTecnico').classList.add('hidden-section');
-            document.getElementById('sectionLogin').classList.remove('hidden-section');
-            document.getElementById('inputPass').value = '';
+            location.reload();
         }
 
-        // ================= FUNÇÕES DO GESTOR =================
-        async function carregarDadosGestor() {
-            const { data: ordens, error } = await _supabase
-                .from('ordens_servico')
-                .select('*')
-                .order('criado_em', { ascending: false });
-
-            if (error) return;
-
-            const tbody = document.getElementById('tbodyGestor');
-            tbody.innerHTML = '';
-
-            let emAtendimento = 0, aguardandoPeca = 0, concluidas = 0;
-
-            ordens.forEach(os => {
-                if(os.status === 'Em Atendimento') emAtendimento++;
-                if(os.status === 'Aguardando Peça') aguardandoPeca++;
-                if(os.status === 'Concluido' || os.status === 'Concluído') concluidas++;
-
-                let badgeClass = 'bg-secondary';
-                if(os.status === 'Em Atendimento') badgeClass = 'bg-primary';
-                if(os.status === 'Aguardando Peça') badgeClass = 'bg-warning text-dark';
-                if(os.status === 'Concluido' || os.status === 'Concluído') badgeClass = 'bg-success';
-
-                let botaoAcao = `<span class="text-muted small">Sem relatório</span>`;
-                if (os.status === 'Concluido' || os.status === 'Concluído' || os.status === 'Aguardando Peça') {
-                    botaoAcao = `<button class="btn btn-sm btn-success fw-bold" onclick="abrirModalRelatorio('${os.id}')"><i class="fa-solid fa-magnifying-glass"></i> Ver Relatório</button>`;
-                } else if (os.status === 'Em Atendimento') {
-                    botaoAcao = `<span class="badge bg-light text-primary border border-primary"><i class="fa-solid fa-spinner fa-spin"></i> Em Campo</span>`;
-                }
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="fw-bold">${os.numero_os}</td>
-                        <td>${os.cliente} <br><small class="text-muted d-block" style="font-size:11px;">${os.instrucoes || ''}</small></td>
-                        <td><i class="fa-regular fa-user text-muted me-1"></i> ${os.tecnico_responsavel}</td>
-                        <td><span class="badge ${badgeClass}">${os.status}</span></td>
-                        <td>${botaoAcao}</td>
-                    </tr>
-                `;
+        // MONTA A GRADE SEMANAL ESTILO KANBAN
+        async function carregarGradeSemanal() {
+            const dias = ['2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-12', '2026-06-13', '2026-06-14'];
+            dias.forEach(d => {
+                const el = document.getElementById(`col-${d}`);
+                if(el) el.innerHTML = '';
             });
 
-            document.getElementById('countEmAtendimento').innerText = emAtendimento;
-            document.getElementById('countAguardandoPeca').innerText = aguardandoPeca;
-            document.getElementById('countConcluidas').innerText = concluidas;
-            document.getElementById('countTotal').innerText = ordens.length;
+            const { data: ordens } = await _supabase.from('ordens_servico').select('*');
+            if(!ordens) return;
+
+            ordens.forEach(os => {
+                const colTarget = document.getElementById(`col-${os.data_agendamento}`);
+                if(colTarget) {
+                    let badgeColor = 'badge-confirmado';
+                    if(os.status === 'Viagem') badgeColor = 'badge-viagem';
+                    if(os.status === 'Em Atendimento') badgeColor = 'badge-andamento';
+
+                    let clickEvent = '';
+                    if(os.status === 'Concluído' || os.status === 'Aguardando Peça') {
+                        clickEvent = `style="cursor:pointer;" onclick="abrirRelatorio('${os.id}')"`;
+                    }
+
+                    colTarget.innerHTML += `
+                        <div class="os-card" ${clickEvent}>
+                            <div class="os-tecnico">${os.tecnico_responsavel.split(' ')[0]}</div>
+                            <div class="os-cliente">${os.cliente.split('(')[0]}</div>
+                            <div class="os-info text-truncate">${os.instrucoes || ''}</div>
+                            <div class="os-badge ${badgeColor}">${os.status}</div>
+                        </div>
+                    `;
+                }
+            });
         }
 
-        // Criar Nova OS (Gestor inserindo na Agenda)
         document.getElementById('formNovaOS').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const num = document.getElementById('novaOSNum').value;
-            const tecnico = document.getElementById('novaOSTecnico').value;
-            const cliente = document.getElementById('novaOSCliente').value;
-            const instrucoes = document.getElementById('novaOSInstrucoes').value;
-
-            const { error } = await _supabase.from('ordens_servico').insert([{
-                numero_os: num,
-                tecnico_responsavel: tecnico,
-                cliente: cliente,
-                instrucoes: instrucoes,
-                status: 'Agendado'
+            await _supabase.from('ordens_servico').insert([{
+                numero_os: document.getElementById('novaOSNum').value,
+                data_agendamento: document.getElementById('novaOSData').value,
+                tecnico_responsavel: document.getElementById('novaOSTecnico').value,
+                cliente: document.getElementById('novaOSCliente').value,
+                instrucoes: document.getElementById('novaOSInstrucoes').value,
+                status: 'Confirmado'
             }]);
-
-            if(!error) {
-                document.getElementById('formNovaOS').reset();
-                bootstrap.Modal.getInstance(document.getElementById('modalNovaOS')).hide();
-                carregarDadosGestor();
-            }
+            bootstrap.Modal.getInstance(document.getElementById('modalNovaOS')).hide();
+            document.getElementById('formNovaOS').reset();
+            carregarGradeSemanal();
         });
 
-        async function abrirModalRelatorio(id) {
+        async function abrirRelatorio(id) {
             const { data: os } = await _supabase.from('ordens_servico').select('*').eq('id', id).single();
             if(os) {
-                document.getElementById('relModalCliente').innerText = os.client || os.cliente;
-                document.getElementById('relModalInstrucoes').innerText = os.instrucoes || 'Sem instruções.';
-                document.getElementById('relModalInicio').innerText = os.horario_inicio ? new Date(os.horario_inicio).toLocaleString('pt-BR') : 'Não registrado';
-                document.getElementById('relModalTexto').innerText = os.relatorio || 'Nenhum texto digitado pelo técnico.';
-                
+                document.getElementById('relModalCliente').innerText = os.cliente;
+                document.getElementById('relModalInstrucoes').innerText = os.instrucoes || '';
+                document.getElementById('relModalTexto').innerText = os.relatorio || 'Sem relatório técnico.';
                 if(os.foto_url) {
                     document.getElementById('relModalAreaFoto').classList.remove('d-none');
                     document.getElementById('relModalLinkFoto').href = os.foto_url;
@@ -353,123 +322,6 @@
                 new bootstrap.Modal(document.getElementById('modalVerRelatorio')).show();
             }
         }
-
-
-        // ================= FUNÇÕES DO TÉCNICO =================
-        async function carregarDadosTecnico() {
-            const { data: ordens } = await _supabase
-                .from('ordens_servico')
-                .select('*')
-                .eq('tecnico_responsavel', usuarioLogado)
-                .order('status', { ascending: true });
-
-            const container = document.getElementById('listaOSTecnico');
-            container.innerHTML = '';
-
-            if(!ordens || ordens.length === 0) {
-                container.innerHTML = `<div class="col-12 text-center text-muted my-4">Nenhuma ordem de serviço agendada para você hoje.</div>`;
-                return;
-            }
-
-            ordens.forEach(os => {
-                let statusBadge = `<span class="badge bg-secondary mb-2">Agendado</span>`;
-                if(os.status === 'Em Atendimento') statusBadge = `<span class="badge bg-primary mb-2"><i class="fa-solid fa-spinner fa-spin"></i> Em Atendimento</span>`;
-                if(os.status === 'Aguardando Peça') statusBadge = `<span class="badge bg-warning text-dark mb-2">Aguardando Peça</span>`;
-                if(os.status === 'Concluido' || os.status === 'Concluído') statusBadge = `<span class="badge bg-success mb-2">Concluído</span>`;
-
-                let botaoAcao = `<button class="btn btn-sm btn-dark w-100 fw-bold" onclick="abrirModalExecucao('${os.id}')">Abrir Atendimento</button>`;
-                if(os.status === 'Concluido' || os.status === 'Concluído') {
-                    botaoAcao = `<button class="btn btn-sm btn-outline-secondary w-100" disabled><i class="fa-solid fa-check"></i> Enviado com Sucesso</button>`;
-                }
-
-                container.innerHTML += `
-                    <div class="col-12 col-md-6">
-                        <div class="card shadow-sm border-0">
-                            <div class="card-body p-3">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <h6 class="fw-bold mb-1 text-dark">OS ${os.numero_os}</h6>
-                                    ${statusBadge}
-                                </div>
-                                <p class="card-text small mb-2"><strong>Cliente:</strong> ${os.cliente}</p>
-                                <p class="card-text small text-muted mb-3" style="font-size:12px;"><strong>Instruções:</strong> ${os.instrucoes || 'Nenhuma.'}</p>
-                                ${botaoAcao}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        async function abrirModalExecucao(id) {
-            const { data: os } = await _supabase.from('ordens_servico').select('*').eq('id', id).single();
-            if(os) {
-                document.getElementById('execModalId').value = os.id;
-                document.getElementById('execModalTitulo').innerText = `OS ${os.numero_os} - Atendimento`;
-                document.getElementById('execModalCliente').innerText = os.cliente;
-                document.getElementById('execModalInstrucoes').innerText = os.instrucoes || '';
-
-                if(os.status === 'Em Atendimento') {
-                    document.getElementById('areaIniciarAtendimento').class = 'd-none';
-                    document.getElementById('areaFormularioFinalizar').classList.remove('d-none');
-                } else {
-                    document.getElementById('areaIniciarAtendimento').className = 'text-center my-4';
-                    document.getElementById('areaFormularioFinalizar').classList.add('d-none');
-                }
-
-                new bootstrap.Modal(document.getElementById('modalExecutarOS')).show();
-            }
-        }
-
-        async function iniciarAtendimentoNoLocal() {
-            const id = document.getElementById('execModalId').value;
-            const { error } = await _supabase.from('ordens_servico').update({
-                status: 'Em Atendimento',
-                horario_inicio: new Date().toISOString()
-            }).eq('id', id);
-
-            if(!error) {
-                document.getElementById('areaIniciarAtendimento').className = 'd-none';
-                document.getElementById('areaFormularioFinalizar').classList.remove('d-none');
-                carregarDadosTecnico();
-            }
-        }
-
-        // Enviar relatório final com foto para o Supabase
-        document.getElementById('formFinalizarOS').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const id = document.getElementById('execModalId').value;
-            const statusFinal = document.getElementById('execStatusFinal').value;
-            const relato = document.getElementById('execTextoRelatorio').value;
-            const fotoFile = document.getElementById('execFoto').files[0];
-
-            let urlFotoFinal = null;
-
-            // Se o técnico tirou foto, faz upload direto para o Storage do Supabase de forma gratuita
-            if (fotoFile) {
-                const nomeArquivo = `${id}_${Date.now()}_foto.jpg`;
-                const { data: uploadData, error: uploadError } = await _supabase.storage
-                    .from('fotos-assistencia')
-                    .upload(nomeArquivo, fotoFile);
-
-                if (!uploadError) {
-                    const { data: urlData } = _supabase.storage.from('fotos-assistencia').getPublicUrl(nomeArquivo);
-                    if (urlData) urlFotoFinal = urlData.publicUrl;
-                }
-            }
-
-            // Atualiza a Ordem de Serviço com o Relatório e Link da Foto
-            const { error } = await _supabase.from('ordens_servico').update({
-                status: statusFinal,
-                relatorio: relato,
-                foto_url: urlFotoFinal
-            }).eq('id', id);
-
-            if(!error) {
-                document.getElementById('formFinalizarOS').reset();
-                bootstrap.Modal.getInstance(document.getElementById('modalExecutarOS')).hide();
-                carregarDadosTecnico();
-            }
-        });
     </script>
 </body>
 </html>
