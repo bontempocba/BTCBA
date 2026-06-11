@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Gestão - Bontempo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid px-4">
+        <span class="navbar-brand mb-0 h1 fw-bold">Bontempo | Controle de Assistências</span>
+        <span class="text-white-50 small">Painel do Gestor</span>
+    </div>
+</nav>
+
+<div class="container-fluid px-4">
+    
+    <div class="row mb-4">
+        <div class="col-12 col-md-3 mb-3">
+            <div class="card bg-primary text-white shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase small opacity-75">Em Atendimento</h6>
+                    <h2 class="fw-bold mb-0">1</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3 mb-3">
+            <div class="card bg-warning text-dark shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase small opacity-75">Aguardando Peça</h6>
+                    <h2 class="fw-bold mb-0">2</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3 mb-3">
+            <div class="card bg-success text-white shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase small opacity-75">Concluídas (Mês)</h6>
+                    <h2 class="fw-bold mb-0">14</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3 mb-3">
+            <div class="card bg-danger text-white shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title text-uppercase small opacity-75">Retorno Necessário</h6>
+                    <h2 class="fw-bold mb-0">0</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-dark">Monitoramento de Visitas Externas</h5>
+            <button class="btn btn-sm btn-dark" onclick="window.location.reload();">🔄 Atualizar Painel</button>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">OS</th>
+                            <th>Cliente / Endereço</th>
+                            <th>Técnico Responsável</th>
+                            <th>Status</th>
+                            <th>Horário Início</th>
+                            <th>Fotos / Relatório</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="ps-4"><strong>#001</strong></td>
+                            <td>Carlos Silva <br><small class="text-muted">Apto 402 - Bloco B</small></td>
+                            <td>Rafael Souza</td>
+                            <td><span class="badge bg-primary">Em Atendimento</span></td>
+                            <td>11/06/2026 09:15</td>
+                            <td><span class="text-muted small">Técnico em campo...</span></td>
+                        </tr>
+                        <tr>
+                            <td class="ps-4"><strong>#002</strong></td>
+                            <td>Mariana Costa <br><small class="text-muted">Casa 12 - Cond. Flores</small></td>
+                            <td>Luiz Fabrício</td>
+                            <td><span class="badge bg-warning text-dark">Aguardando Peça</span></td>
+                            <td>10/06/2026 14:00</td>
+                            <td>
+                                <a href="#" class="btn btn-xs btn-outline-secondary py-0 px-2 small">Ver Foto do Defeito</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="ps-4"><strong>#003</strong></td>
+                            <td>Roberto Almeida <br><small class="text-muted">Sala Comercial 901</small></td>
+                            <td>Ênio Oliveira</td>
+                            <td><span class="badge bg-success">Concluído</span></td>
+                            <td>09/06/2026 10:30</td>
+                            <td>
+                                <span class="text-success small d-block">✓ Portas Reguladas</span>
+                                <a href="#" class="small text-decoration-none">Ver Antes/Depois</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+</body>
+</html>
