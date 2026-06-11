@@ -1,0 +1,15 @@
+<div class="mb-3">
+    <label class="form-label fw-bold">Foto do "Antes" (Problema)</label>
+    <input type="file" name="foto_antes" class="form-control" accept="image/*">
+    {% if os.foto_antes %}
+        <p class="text-success small">✓ Foto cadastrada: <a href="{{ os.foto_antes }}" target="_blank">Visualizar Foto do Antes</a></p>
+    {% endif %}
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Foto do "Depois" (Solução/Acabamento)</label>
+    <input type="file" name="foto_depois" class="form-control" accept="image/*">
+    {% if os.foto_depois %}
+        <p class="text-success small">✓ Foto cadastrada: <a href="{{ os.foto_depois }}" target="_blank">Visualizar Foto do Depois</a></p>
+    {% endif %}
+</div>
