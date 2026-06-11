@@ -3,102 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atendimento Técnico - Bontempo</title>
+    <title>Login - Sistema Bontempo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-login {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+        }
+        .btn-bontempo {
+            background-color: #000000;
+            color: #ffffff;
+        }
+        .btn-bontempo:hover {
+            background-color: #2b2b2b;
+            color: #ffffff;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div class="container my-4">
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Bontempo | Assistência Técnica</h5>
-            <span class="badge bg-warning text-dark" id="statusBadge">Agendado</span>
-        </div>
-        <div class="card-body">
-            <h6><strong>Cliente:</strong> Ordem de Serviço de Teste</h6>
-            <p class="text-muted"><strong>Instruções:</strong> Ajuste de dobradiças, alinhamento de frentes de gaveta e vistoria de acabamento.</p>
-            <p class="text-secondary small mb-0" id="tempoRegistro"></p>
-        </div>
+<div class="card card-login shadow-lg bg-white p-4">
+    <div class="text-center mb-4">
+        <h3 class="fw-bold text-dark mb-1">BONTEMPO</h3>
+        <p class="text-muted small">Assistência Técnica & Logística</p>
     </div>
 
-    <div id="areaBotaoIniciar">
-        <button type="button" onclick="iniciarServico()" class="btn btn-primary w-100 py-3 fw-bold shadow-sm">
-            📍 CONFIRMAR CHEGADA (INICIAR SERVIÇO)
+    <div id="erroLogin" class="alert alert-danger small py-2 d-none" role="alert">
+        Usuário ou senha incorretos!
+    </div>
+
+    <form id="formLogin">
+        <div class="mb-3">
+            <label class="form-label small fw-bold">E-mail ou Usuário</label>
+            <input type="text" id="usuario" class="form-control" placeholder="exemplo@bontempo.com" required>
+        </div>
+        
+        <div class="mb-4">
+            <label class="form-label small fw-bold">Senha de Acesso</label>
+            <input type="password" id="senha" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <button type="button" onclick="realizarLogin()" class="btn btn-bontempo w-100 py-2 fw-bold mb-3">
+            ENTRAR NO SISTEMA
         </button>
-    </div>
-
-    <div id="formularioTecnico" style="display: none;">
-        <form class="card card-body shadow-sm">
-            
-            <div class="mb-3">
-                <label class="form-label fw-bold">Alterar Status do Serviço</label>
-                <select class="form-select" id="selectStatus" onchange="atualizarStatusBadge()">
-                    <option value="Em Atendimento">Em Atendimento</option>
-                    <option value="Concluído">Concluído</option>
-                    <option value="Parcialmente Concluído">Parcialmente Concluído</option>
-                    <option value="Aguardando Peça">Aguardando Peça (Assistência)</option>
-                    <option value="Retorno Necessário">Retorno Necessário</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Foto do "Antes" (Problema)</label>
-                <input type="file" class="form-control" accept="image/*">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Foto do "Depois" (Acabamento/Solução)</label>
-                <input type="file" class="form-control" accept="image/*">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-bold">Relatório Detalhado das Atividades</label>
-                <textarea class="form-control" rows="4" placeholder="Descreva aqui o que foi feito na casa do cliente..."></textarea>
-            </div>
-
-            <button type="button" onclick="salvarRelatorio()" class="btn btn-success w-100 py-2 fw-bold">
-                💾 SALVAR RELATÓRIO E PROGRESSO
-            </button>
-        </form>
-    </div>
+        
+        <div class="text-center text-muted border-top pt-2" style="font-size: 11px;">
+            Acesso restrito para colaboradores autorizados.
+        </div>
+    </form>
 </div>
 
 <script>
-    function iniciarServico() {
-        // Oculta o botão de iniciar e mostra o formulário técnico
-        document.getElementById('areaBotaoIniciar').style.display = 'none';
-        document.getElementById('formularioTecnico').style.display = 'block';
-        
-        // Atualiza o Status para Em Atendimento
-        document.getElementById('statusBadge').className = "badge bg-primary";
-        document.getElementById('statusBadge').innerText = "Em Atendimento";
-        
-        // Pega o horário atual do celular
-        let agora = new Date().toLocaleString('pt-BR');
-        document.getElementById('tempoRegistro').innerHTML = "⏱️ <strong>Início do atendimento:</strong> " + agora;
-    }
+    function realizarLogin() {
+        let usuario = document.getElementById('usuario').value.toLowerCase().trim();
+        let senha = document.getElementById('senha').value;
+        let erro = document.getElementById('erroLogin');
 
-    function atualizarStatusBadge() {
-        let status = document.getElementById('selectStatus').value;
-        let badge = document.getElementById('statusBadge');
-        badge.innerText = status;
-
-        if (status === 'Concluído') {
-            badge.className = "badge bg-success";
-        } else if (status === 'Em Atendimento') {
-            badge.className = "badge bg-primary";
-        } else {
-            badge.className = "badge bg-warning text-dark";
-        }
-    }
-
-    function salvarRelatorio() {
-        let status = document.getElementById('selectStatus').value;
-        alert("Relatório salvo com sucesso! Status atualizado para: " + status);
-        
-        if (status === 'Concluído') {
-            let agora = new Date().toLocaleString('pt-BR');
-            document.getElementById('tempoRegistro').innerHTML += "<br>🏁 <strong>Término do atendimento:</strong> " + agora;
+        // LOGIN DE TESTE PARA O GESTOR
+        if (usuario === 'gestor' && senha === '1234') {
+            erro.classList.add('d-none');
+            window.location.href = 'dashboard.html';
+        } 
+        // LOGIN DE TESTE PARA O TÉCNICO
+        else if (usuario === 'tecnico' && senha === '1234') {
+            erro.classList.add('d-none');
+            window.location.href = 'tecnico.html';
+        } 
+        // SE ERRAR OS DADOS
+        else {
+            erro.classList.remove('d-none');
         }
     }
 </script>
