@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Controle Bontempo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+        <span class="navbar-brand mb-0 h1">Bontempo | Gestão de Assistência Técnica</span>
+    </div>
+</nav>
+
+<div class="container my-5">
+    <h2 class="mb-4">Painel de Acompanhamento</h2>
+    
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 alignment-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>OS</th>
+                        <th>Cliente</th>
+                        <th>Técnico</th>
+                        <th>Status</th>
+                        <th>Horário Inicial</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in ordens %}
+                    <tr>
+                        <td><strong>#{{ item.id }}</strong></td>
+                        <td>{{ item.cliente }}</td>
+                        <td>{{ item.tecnico }}</td>
+                        <td>
+                            <span class="badge {% if item.status == 'Concluído' %}bg-success{% elif item.status == 'Em Atendimento' %}bg-primary{% else %}bg-warning text-dark{% endif %}">
+                                {{ item.status }}
+                            </span>
+                        </td>
+                        <td>{{ item.inicio or 'Não iniciado' }}</td>
+                        <td>
+                            <a href="/os/{{ item.id }}" class="btn btn-sm btn-outline-secondary">Abrir no Celular</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
