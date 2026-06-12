@@ -3,119 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Assistência - Bontempo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Bontempo - Agenda Técnica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .bg-login { background-color: #1a1a1a; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .card-login { width: 100%; max-width: 400px; border-radius: 10px; }
-        .btn-bontempo { background-color: #000000; color: #ffffff; }
-        .btn-bontempo:hover { background-color: #2b2b2b; color: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { display: flex; background-color: #f4f6f9; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background-color: #ffffff; border-right: 1px solid #e2e8f0; padding: 30px 24px; display: flex; flex-direction: column; justify-content: space-between; }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: 2px; color: #000000; margin-bottom: 40px; }
+        .menu-items { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #64748b; text-decoration: none; font-weight: 500; border-radius: 8px; }
+        .menu-item.active { background-color: #edf2f7; color: #1a202c; font-weight: 600; }
+        .logout-btn { color: #e53e3e; border-top: 1px solid #edf2f7; padding-top: 20px; text-decoration: none; }
+        .main-content { flex-grow: 1; padding: 30px; display: flex; flex-direction: column; overflow-y: auto; }
+        .agenda-header { display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 20px 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px; }
+        .date-navigator { display: flex; align-items: center; gap: 15px; background: #f7fafc; padding: 8px 16px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .date-navigator span { font-weight: 600; color: #2d3748; min-width: 120px; text-align: center; }
+        .nav-btn { background: none; border: none; cursor: pointer; color: #4a5568; padding: 4px 8px; }
+        .btn-novo-agendamento { background-color: #0066ff; color: #ffffff; border: none; padding: 12px 24px; font-weight: 600; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .agenda-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; flex-grow: 1; min-height: 500px; }
+        .dia-coluna { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .dia-coluna.active-day { border: 2px solid #0066ff; background-color: #f8faff; }
+        .dia-header { text-align: center; border-bottom: 1px solid #edf2f7; padding-bottom: 15px; margin-bottom: 5px; }
+        .dia-nome { font-size: 11px; text-transform: uppercase; color: #a0aec0; font-weight: 700; letter-spacing: 1px; }
+        .dia-data { font-size: 20px; font-weight: 700; color: #1a202c; margin-top: 4px; }
+        .agendamento-card { background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #0066ff; border-radius: 6px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .agendamento-card h4 { font-size: 14px; color: #2d3748; margin-bottom: 4px; }
+        .agendamento-card p { font-size: 12px; color: #718096; }
+        .loading-msg { text-align: center; color: #a0aec0; font-size: 14px; font-style: italic; margin-top: 20px; }
     </style>
 </head>
-<body class="bg-light">
+<body>
 
-<div id="sectionLogin" class="bg-login">
-    <div class="card card-login shadow-lg bg-white p-4">
-        <div class="text-center mb-4">
-            <h3 class="fw-bold text-dark mb-1">BONTEMPO</h3>
-            <p class="text-muted small">Assistência Técnica & Logística</p>
+    <!-- BARRA LATERAL -->
+    <aside class="sidebar">
+        <div class="top-sidebar">
+            <div class="logo">BONTEMPO</div>
+            <nav class="menu-items">
+                <a href="#" class="menu-item active"><i class="fa-regular fa-calendar"></i> Agenda Técnica</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-history"></i> Histórico Vistorias</a>
+                <a href="#" class="menu-item"><i class="fa-solid fa-users"></i> Equipes / Técnicos</a>
+            </nav>
         </div>
-        <div id="erroLogin" class="alert alert-danger small py-2 d-none">Usuário ou senha incorretos!</div>
-        <form>
-            <div class="mb-3">
-                <label class="form-label small fw-bold">E-mail ou Usuário</label>
-                <input type="text" id="usuario" class="form-control" placeholder="exemplo@bontempo.com">
+        <a href="#" class="menu-item logout-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Sair</a>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+        <header class="agenda-header">
+            <div class="date-navigator">
+                <button class="nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                <span>08/06 até 14/06</span>
+                <button class="nav-btn"><i class="fa-solid fa-chevron-right"></i></button>
             </div>
-            <div class="mb-4">
-                <label class="form-label small fw-bold">Senha de Acesso</label>
-                <input type="password" id="senha" class="form-control" placeholder="••••••••">
+            <button class="btn-novo-agendamento"><i class="fa-solid fa-plus"></i> Novo Agendamento</button>
+        </header>
+
+        <section class="agenda-grid">
+            <!-- QUINTA -->
+            <div class="dia-coluna" id="card-quinta">
+                <div class="dia-header">
+                    <div class="dia-nome">Quinta</div>
+                    <div class="dia-data">11/06</div>
+                </div>
             </div>
-            <button type="button" onclick="verificarLogin()" class="btn btn-bontempo w-100 py-2 fw-bold">ENTRAR NO SISTEMA</button>
-        </form>
-    </div>
-</div>
 
-<div id="sectionGestor" style="display: none;">
-    <nav class="navbar navbar-dark bg-dark mb-4">
-        <div class="container-fluid px-4">
-            <span class="navbar-brand h1 fw-bold mb-0">Bontempo | Controle de Assistências</span>
-            <button onclick="fazerLogout()" class="btn btn-sm btn-outline-light">Sair</button>
-        </div>
-    </nav>
-    <div class="container-fluid px-4">
-        <div class="row mb-4">
-            <div class="col-md-3 mb-3"><div class="card bg-primary text-white p-3"><h6>Em Atendimento</h6><h2>1</h2></div></div>
-            <div class="col-md-3 mb-3"><div class="card bg-warning text-dark p-3"><h6>Aguardando Peça</h6><h2>2</h2></div></div>
-            <div class="col-md-3 mb-3"><div class="card bg-success text-white p-3"><h6>Concluídas (Mês)</h6><h2>14</h2></div></div>
-            <div class="col-md-3 mb-3"><div class="card bg-danger text-white p-3"><h6>Retornos</h6><h2>0</h2></div></div>
-        </div>
-        <div class="card shadow-sm">
-            <div class="card-header bg-white fw-bold py-3">Monitoramento de Visitas Externas</div>
-            <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                    <thead class="table-light">
-                        <tr><th>OS</th><th>Cliente</th><th>Técnico</th><th>Status</th><th>Horário Início</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td><strong>#001</strong></td><td>Carlos Silva (Apto 402)</td><td>Rafael Souza</td><td><span class="badge bg-primary">Em Atendimento</span></td><td>11/06/2026 09:15</td></tr>
-                        <tr><td><strong>#002</strong></td><td>Mariana Costa (Casa 12)</td><td>Luiz Fabrício</td><td><span class="badge bg-warning text-dark">Aguardando Peça</span></td><td>10/06/2026 14:00</td></tr>
-                        <tr><td><strong>#003</strong></td><td>Roberto Almeida (Sala 901)</td><td>Ênio Oliveira</td><td><span class="badge bg-success">Concluído</span></td><td>09/06/2026 10:30</td></tr>
-                    </tbody>
-                </table>
+            <!-- SEXTA -->
+            <div class="dia-coluna active-day" id="card-sexta">
+                <div class="dia-header">
+                    <div class="dia-nome">Sexta</div>
+                    <div class="dia-data">12/06</div>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<div id="sectionTecnico" style="display: none;" class="container my-4">
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">OS #001 - Visita Técnica</h5>
-            <button onclick="fazerLogout()" class="btn btn-sm btn-outline-light">Sair</button>
-        </div>
-        <div class="card-body">
-            <h6><strong>Cliente:</strong> Ordem de Serviço de Teste</h6>
-            <p class="text-muted"><strong>Instruções:</strong> Ajuste de guias, alinhamento de frentes de gaveta e vistoria de acabamento.</p>
-            <div id="registroHorarios" class="small mb-3"></div>
-            <button id="btnChegada" onclick="confirmarChegada()" class="btn btn-primary w-100 py-3 fw-bold">📍 CONFIRMAR CHEGADA (INICIAR SERVIÇO)</button>
-        </div>
-    </div>
-    <div id="formTecnico" class="card card-body shadow-sm" style="display: none;">
-        <div class="mb-3">
-            <label class="form-label fw-bold">Relatório das Atividades</label>
-            <textarea class="form-control" rows="4" placeholder="Descreva os ajustes realizados..."></textarea>
-        </div>
-        <button onclick="alert('Salvo com sucesso!')" class="btn btn-success w-100 fw-bold">💾 SALVAR RELATÓRIO</button>
-    </div>
-</div>
+            <!-- SÁBADO -->
+            <div class="dia-coluna" id="card-sabado">
+                <div class="dia-header">
+                    <div class="dia-nome">Sábado</div>
+                    <div class="dia-data">13/06</div>
+                </div>
+            </div>
 
-<script>
-    function verificarLogin() {
-        let user = document.getElementById('usuario').value.toLowerCase().trim();
-        let pass = document.getElementById('senha').value;
-        let erro = document.getElementById('erroLogin');
+            <!-- DOMINGO -->
+            <div class="dia-coluna" id="card-domingo">
+                <div class="dia-header">
+                    <div class="dia-nome">Domingo</div>
+                    <div class="dia-data">14/06</div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-        if (user === 'gestor' && pass === '1234') {
-            document.getElementById('sectionLogin').style.setProperty('display', 'none', 'important');
-            document.getElementById('sectionGestor').style.display = 'block';
-        } else if (user === 'tecnico' && pass === '1234') {
-            document.getElementById('sectionLogin').style.setProperty('display', 'none', 'important');
-            document.getElementById('sectionTecnico').style.display = 'block';
-        } else {
-            erro.classList.remove('d-none');
+    <!-- PROCESSO AUTOMÁTICO DE CARREGAMENTO -->
+    <script>
+        const API_URL = '/api/agenda';
+
+        async function carregarDadosAgenda() {
+            adicionarLoadersIniciais();
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error();
+                
+                const agendamentos = await response.json();
+                limparTodasColunas();
+
+                agendamentos.forEach(item => {
+                    renderizarNaColunaCorreta(item);
+                });
+            } catch (error) {
+                console.error(error);
+                removerLoaders();
+            }
         }
-    }
 
-    function confirmarChegada() {
-        document.getElementById('btnChegada').style.display = 'none';
-        document.getElementById('formTecnico').style.display = 'block';
-        let hora = new Date().toLocaleString('pt-BR');
-        document.getElementById('registroHorarios').innerHTML = "<span class='text-success'>⏱️ <strong>Início:</strong> " + hora + "</span>";
-    }
+        function renderizarNaColunaCorreta(item) {
+            const mapaDias = {
+                '11/06': 'card-quinta',
+                '12/06': 'card-sexta',
+                '13/06': 'card-sabado',
+                '14/06': 'card-domingo'
+            };
+            const idAlvo = mapaDias[item.data];
+            if (!idAlvo) return;
 
-    function fazerLogout() {
-        window.location.reload();
-    }
-</script>
+            const coluna = document.getElementById(idAlvo);
+            if (coluna) {
+                const cardHTML = `
+                    <div class="agendamento-card">
+                        <h4>${item.tecnico || 'Técnico'}</h4>
+                        <p>${item.projeto || 'Montagem / Vistoria'}</p>
+                    </div>
+                `;
+                coluna.insertAdjacentHTML('beforeend', cardHTML);
+            }
+        }
+
+        function adicionarLoadersIniciais() {
+            document.querySelectorAll('.dia-coluna').forEach(col => {
+                col.insertAdjacentHTML('beforeend', '<div class="loading-msg">Carregando...</div>');
+            });
+        }
+
+        function limparTodasColunas() {
+            document.querySelectorAll('.dia-coluna').forEach(col => {
+                const header = col.querySelector('.dia-header');
+                col.innerHTML = '';
+                if (header) col.appendChild(header);
+            });
+        }
+
+        function removerLoaders() {
+            document.querySelectorAll('.loading-msg').forEach(el => el.remove());
+        }
+
+        document.addEventListener('DOMContentLoaded', carregarDadosAgenda);
+    </script>
 </body>
 </html>
