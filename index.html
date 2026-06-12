@@ -1,43 +1,67 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bontempo | Agenda Técnica</title>
+    <title>Bontempo | Painel Dinâmico de Engenharia</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background-color: #f3f4f6; font-family: 'Segoe UI', system-ui, sans-serif; overflow-x: hidden; }
-        .sidebar { width: 240px; background: #fff; height: 100vh; position: fixed; top: 0; left: 0; border-right: 1px solid #e5e7eb; padding: 20px 15px; }
-        .main-content { margin-left: 240px; padding: 20px; min-height: 100vh; }
-        .logo-space { font-size: 24px; font-weight: 800; letter-spacing: 2px; color: #111; margin-bottom: 30px; border-bottom: 2px solid #111; padding-bottom: 10px; }
-        .nav-menu .nav-link { color: #4b5563; font-weight: 500; padding: 10px 15px; border-radius: 8px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; transition: all 0.2s; text-decoration: none; }
-        .nav-menu .nav-link:hover, .nav-menu .nav-link.active { background-color: #eff6ff; color: #2563eb; }
-        .nav-menu .nav-link.btn-sair { color: #dc2626; margin-top: 40px; }
+        body { background-color: #f1f5f9; font-family: 'Segoe UI', system-ui, sans-serif; overflow-x: hidden; }
+        
+        /* Sidebar Fiel ao Modelo */
+        .sidebar { width: 260px; background: #fff; height: 100vh; position: fixed; top: 0; left: 0; border-right: 1px solid #e2e8f0; padding: 25px 20px; z-index: 100; }
+        .main-content { margin-left: 260px; padding: 25px; min-height: 100vh; }
+        .logo-space { font-size: 26px; font-weight: 900; letter-spacing: 3px; color: #000; margin-bottom: 35px; text-transform: uppercase; text-align: left; padding-left: 10px; }
+        
+        .nav-menu .nav-link { color: #64748b; font-weight: 600; font-size: 14px; padding: 12px 15px; border-radius: 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; transition: all 0.2s; text-decoration: none; }
+        .nav-menu .nav-link:hover, .nav-menu .nav-link.active { background-color: #f1f5f9; color: #2563eb; }
+        .nav-menu .nav-link.btn-sair { color: #dc2626; margin-top: 50px; }
         .nav-menu .nav-link.btn-sair:hover { background-color: #fef2f2; }
         
-        /* Grade da Agenda */
-        .agenda-grid { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; overflow-x: auto; margin-top: 20px; }
-        .agenda-col { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; min-height: 500px; padding: 10px; }
-        .agenda-header { text-align: center; padding-bottom: 10px; border-bottom: 2px solid #f3f4f6; margin-bottom: 12px; }
-        .agenda-header .dia-semana { font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; }
-        .agenda-header .dia-data { font-size: 16px; font-weight: 800; color: #1f2937; }
+        /* Top Control Bar */
+        .control-card { background: #fff; border-radius: 16px; border: none; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); padding: 16px 24px; margin-bottom: 25px; }
+        .semana-titulo { font-size: 16px; font-weight: 700; color: #1e293b; min-width: 250px; text-align: center; }
         
-        /* Cards Técnicos */
-        .os-card { background: #fdfdfd; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border-left: 4px solid #2563eb; transition: transform 0.2s; }
-        .os-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .os-tecnico { font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase; margin-bottom: 5px; }
-        .os-cliente { font-size: 13px; font-weight: 700; color: #1f2937; margin-bottom: 2px; }
-        .os-info { font-size: 11px; color: #64748b; margin-bottom: 6px; line-height: 1.3; }
-        .os-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; display: inline-block; }
+        /* Grade Kanban Avançada */
+        .agenda-grid { display: grid; grid-template-columns: repeat(7, minmax(280px, 1fr)); gap: 16px; overflow-x: auto; padding-bottom: 15px; }
+        .agenda-col { background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; min-height: 650px; padding: 14px; display: flex; flex-direction: column; }
+        
+        .agenda-header { text-align: center; padding: 10px 5px 15px 5px; border-bottom: 2px solid #e2e8f0; margin-bottom: 15px; }
+        .agenda-header .dia-semana { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .agenda-header .dia-data { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 2px; }
+        .agenda-col.dia-atual { background: #edf2f9; border: 2px solid #3b82f6; }
+        
+        /* Cards Detalhados de OS */
+        .os-container { flex-grow: 1; display: flex; flex-direction: column; gap: 12px; }
+        .os-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.02), 0 2px 4px -2px rgb(0 0 0 / 0.02); border-left: 5px solid #3b82f6; transition: all 0.25s ease; position: relative; }
+        .os-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); border-left-color: #1d4ed8; }
+        
+        /* Cores de borda por Técnico */
+        .os-card[data-tecnico="Wennyson"] { border-left-color: #3b82f6; }   /* Azul */
+        .os-card[data-tecnico="Tio Viny"] { border-left-color: #10b981; }   /* Verde */
+        .os-card[data-tecnico="Lucinei"] { border-left-color: #f59e0b; }    /* Laranja */
+
+        .os-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .os-number { font-size: 11px; font-weight: 700; background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; }
+        .os-badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
+        
+        /* Status Badges */
         .badge-confirmado { background-color: #dbeafe; color: #1e40af; }
         .badge-viagem { background-color: #dcfce7; color: #166534; }
         .badge-andamento { background-color: #fef9c3; color: #854d0e; }
+        .badge-concluido { background-color: #e2e8f0; color: #334155; text-decoration: line-through; }
+
+        .os-cliente { font-size: 14px; font-weight: 700; color: #0f172a; margin-bottom: 6px; line-height: 1.3; }
+        .os-tecnico-tag { font-size: 11px; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 5px; margin-bottom: 8px; background: #f8fafc; padding: 4px 8px; border-radius: 6px; width: fit-content; }
+        .os-desc { font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         
+        .os-action-btn { font-size: 11px; font-weight: 700; color: #2563eb; background: #eff6ff; border: none; width: 100%; padding: 6px; border-radius: 6px; transition: background 0.2s; }
+        .os-action-btn:hover { background: #dbeafe; }
+
         .hidden-section { display: none !important; }
-        .login-box { max-width: 380px; margin: 10% auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .login-box { max-width: 380px; margin: 10% auto; background: #fff; padding: 35px; border-radius: 16px; box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1); }
     </style>
 </head>
 <body>
@@ -62,10 +86,10 @@
         </div>
     </div>
 
-    <!-- PAINEL GESTOR -->
+    <!-- PAINEL GESTOR DINÂMICO -->
     <div id="sectionGestor" class="hidden-section">
         <div class="sidebar">
-            <div class="logo-space text-center">BONTEMPO</div>
+            <div class="logo-space">Bontempo</div>
             <div class="nav-menu">
                 <a href="#" class="nav-link active"><i class="fa-solid fa-calendar-days"></i> Agenda Técnica</a>
                 <a href="#" class="nav-link"><i class="fa-solid fa-clock-history"></i> Histórico Vistorias</a>
@@ -75,30 +99,25 @@
         </div>
 
         <div class="main-content">
-            <div class="card p-3 border-0 shadow-sm mb-3">
+            <!-- Barra de Controles Avançados -->
+            <div class="control-card">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <button class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-left"></i></button>
-                        <span class="fw-bold text-dark mx-2">Semana Atual de Atendimentos</span>
-                        <button class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-right"></i></button>
+                    <div class="d-flex align-items-center bg-light rounded-3 p-1">
+                        <button class="btn btn-white btn-sm shadow-sm border" onclick="mudarSemana(-7)"><i class="fa-solid fa-chevron-left"></i></button>
+                        <span id="labelSemana" class="semana-titulo">Carregando período...</span>
+                        <button class="btn btn-white btn-sm shadow-sm border" onclick="mudarSemana(7)"><i class="fa-solid fa-chevron-right"></i></button>
                     </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary fw-bold px-3" data-bs-toggle="modal" data-bs-target="#modalNovaOS">
-                            <i class="fa-solid fa-plus"></i> Novo Agendamento
+                    <div>
+                        <button class="btn btn-primary fw-bold px-4 py-2 shadow-sm rounded-3" data-bs-toggle="modal" data-bs-target="#modalNovaOS">
+                            <i class="fa-solid fa-plus me-1"></i> Novo Agendamento
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- GRADE SEMANAL -->
-            <div class="agenda-grid">
-                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">SEGUNDA</div><div class="dia-data">08/06</div></div><div id="col-2026-06-08"></div></div>
-                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">TERÇA</div><div class="dia-data">09/06</div></div><div id="col-2026-06-09"></div></div>
-                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">QUARTA</div><div class="dia-data">10/06</div></div><div id="col-2026-06-10"></div></div>
-                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">QUINTA</div><div class="dia-data">11/06</div></div><div id="col-2026-06-11"></div></div>
-                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">SEXTA</div><div class="dia-data">12/06</div></div><div id="col-2026-06-12"></div></div>
-                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">SÁBADO</div><div class="dia-data">13/06</div></div><div id="col-2026-06-13"></div></div>
-                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">DOMINGO</div><div class="dia-data">14/06</div></div><div id="col-2026-06-14"></div></div>
+            <!-- GRADE SEMANAL AUTOMÁTICA -->
+            <div class="agenda-grid" id="gradeDiasSemana">
+                <!-- As 7 colunas serão criadas via JavaScript dinamicamente com datas reais -->
             </div>
         </div>
     </div>
@@ -112,25 +131,25 @@
         <div id="listaOSTecnico" class="row g-3"></div>
     </div>
 
-    <!-- MODAL: NOVO AGENDAMENTO -->
+    <!-- MODAL: CADASTRO COMPLETO -->
     <div class="modal fade" id="modalNovaOS" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="formNovaOS" class="modal-content">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold">Criar Compromisso Técnico</h5>
+        <div class="modal-dialog modal-dialog-centered">
+            <form id="formNovaOS" class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header bg-dark text-white p-3">
+                    <h5 class="modal-title fw-bold m-0"><i class="fa-solid fa-file-signature me-2"></i>Criar Compromisso Técnico</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body row g-3">
+                <div class="modal-body p-4 row g-3">
                     <div class="col-6">
-                        <label class="form-label small fw-bold">Data do Atendimento</label>
+                        <label class="form-label small fw-bold">Data da Execução</label>
                         <input type="date" id="novaOSData" class="form-control" required>
                     </div>
                     <div class="col-6">
-                        <label class="form-label small fw-bold">Número OS</label>
-                        <input type="text" id="novaOSNum" class="form-control" placeholder="#001" required>
+                        <label class="form-label small fw-bold">Número Identificador / OS</label>
+                        <input type="text" id="novaOSNum" class="form-control" placeholder="Ex: #2054" required>
                     </div>
                     <div class="col-12">
-                        <label class="form-label small fw-bold">Técnico Responsável</label>
+                        <label class="form-label small fw-bold">Técnico Encarregado</label>
                         <select id="novaOSTecnico" class="form-select" required>
                             <option value="Wennyson">Wennyson</option>
                             <option value="Tio Viny">Tio Viny</option>
@@ -138,38 +157,38 @@
                         </select>
                     </div>
                     <div class="col-12">
-                        <label class="form-label small fw-bold">Cliente / Endereço</label>
-                        <input type="text" id="novaOSCliente" class="form-control" placeholder="Nome do cliente" required>
+                        <label class="form-label small fw-bold">Cliente / Local da Obra</label>
+                        <input type="text" id="novaOSCliente" class="form-control" placeholder="Nome completo do cliente e endereço" required>
                     </div>
                     <div class="col-12">
-                        <label class="form-label small fw-bold">Especificações do Serviço</label>
-                        <textarea id="novaOSInstrucoes" class="form-control" rows="3"></textarea>
+                        <label class="form-label small fw-bold">Descrição Detalhada do Serviço</label>
+                        <textarea id="novaOSInstrucoes" class="form-control" rows="3" placeholder="Insira o check-list de montagem ou vistoria técnica..." required></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary btn-sm px-3 fw-bold">Agendar na Grade</button>
+                <div class="modal-footer bg-light p-3">
+                    <button type="button" class="btn btn-secondary btn-sm rounded-3 px-3" data-bs-toggle="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-sm rounded-3 px-4 fw-bold">Confirmar e Fixar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: RELATÓRIO DO GESTOR -->
+    <!-- MODAL: DETALHES -->
     <div class="modal fade" id="modalVerRelatorio" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
+            <div class="modal-content border-0 shadow-lg rounded-4">
                 <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold">Detalhes da Assistência</h5>
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-circle-info me-2"></i>Informações de Assistência</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <p class="mb-1"><strong>Cliente:</strong> <span id="relModalCliente"></span></p>
-                    <p class="mb-3 text-muted small"><strong>Instruções:</strong> <span id="relModalInstrucoes"></span></p>
+                <div class="modal-body p-4">
+                    <div class="mb-2"><span class="small text-muted d-block">Cliente</span><h5 class="fw-bold text-dark" id="relModalCliente"></h5></div>
+                    <div class="mb-3"><span class="small text-muted d-block">Especificação / Escopo</span><p class="p-3 bg-light rounded text-dark small border" id="relModalInstrucoes"></p></div>
                     <hr>
-                    <p class="mb-2"><strong>Relatório do Técnico:</strong></p>
+                    <div class="mb-2"><span class="small text-muted d-block">Relatório Preenchido pelo Técnico</span></div>
                     <div class="p-3 bg-light rounded small text-muted border mb-3" id="relModalTexto"></div>
                     <div id="relModalAreaFoto" class="text-center d-none">
-                        <a id="relModalLinkFoto" href="#" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-image"></i> Abrir Imagem</a>
+                        <a id="relModalLinkFoto" href="#" target="_blank" class="btn btn-sm btn-outline-primary w-100 rounded-3"><i class="fa-solid fa-image me-1"></i> Abrir Imagem Anexada da Obra</a>
                     </div>
                 </div>
             </div>
@@ -183,44 +202,80 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let usuarioLogado = null;
+        let dataBaseSemana = new Date(); // Controla a semana atual dinamicamente
 
         document.getElementById('formLogin').addEventListener('submit', function(e) {
             e.preventDefault();
             const user = document.getElementById('inputUser').value.trim().toLowerCase();
-            
             if(user === 'gestor') {
                 usuarioLogado = 'Gestor';
                 document.getElementById('sectionLogin').classList.add('hidden-section');
                 document.getElementById('sectionGestor').classList.remove('hidden-section');
-                carregarGradeSemanal();
-            } 
-            else if (user === 'wennyson') {
-                usuarioLogado = 'Wennyson';
-                removerECarregarTecnico();
-            } else if (user === 'tio viny' || user === 'tioviny') {
-                usuarioLogado = 'Tio Viny';
-                removerECarregarTecnico();
-            } else if (user === 'lucinei') {
-                usuarioLogado = 'Lucinei';
-                removerECarregarTecnico();
-            }
-            else {
+                renderizarEstruturaColunas();
+            } else if (['wennyson', 'lucinei', 'tio viny', 'tioviny'].includes(user)) {
+                usuarioLogado = user === 'tioviny' ? 'Tio Viny' : user.charAt(0).toUpperCase() + user.slice(1);
+                document.getElementById('sectionLogin').classList.add('hidden-section');
+                document.getElementById('sectionTecnico').classList.remove('hidden-section');
+                carregarDadosTecnico();
+            } else {
                 document.getElementById('erroLogin').classList.remove('d-none');
             }
         });
 
-        function removerECarregarTecnico() {
-            document.getElementById('sectionLogin').classList.add('hidden-section');
-            document.getElementById('sectionTecnico').classList.remove('hidden-section');
-            carregarDadosTecnico();
-        }
-
         function logout() { location.reload(); }
 
-        async function carregarGradeSemanal() {
-            const dias = ['2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-12', '2026-06-13', '2026-06-14'];
-            dias.forEach(d => { const el = document.getElementById(`col-${d}`); if(el) el.innerHTML = ''; });
+        function formatarDataSQL(date) {
+            let d = date.getDate();
+            let m = date.getMonth() + 1;
+            return `${date.getFullYear()}-${m < 10 ? '0'+m : m}-${d < 10 ? '0'+d : d}`;
+        }
 
+        // GERA AS COLUNAS DINAMICAMENTE BASEADO NA DATA ATUAL DO SISTEMA
+        function renderizarEstruturaColunas() {
+            const grade = document.getElementById('gradeDiasSemana');
+            grade.innerHTML = '';
+
+            let diaCorrente = new Date(dataBaseSemana);
+            let diaSemanaIndex = diaCorrente.getDay();
+            let diferencaParaSegunda = diaSemanaIndex === 0 ? -6 : 1 - diaSemanaIndex;
+            diaCorrente.setDate(diaCorrente.getDate() + diferencaParaSegunda);
+
+            const nomesDias = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
+            let dataInicioFormatada = "";
+            let dataFimFormatada = "";
+
+            for (let i = 0; i < 7; i++) {
+                let dataString = formatarDataSQL(diaCorrente);
+                let exibicaoData = `${diaCorrente.getDate() < 10 ? '0'+diaCorrente.getDate() : diaCorrente.getDate()}/${(diaCorrente.getMonth()+1) < 10 ? '0'+(diaCorrente.getMonth()+1) : (diaCorrente.getMonth()+1)}`;
+                
+                if (i === 0) dataInicioFormatada = exibicaoData;
+                if (i === 6) dataFimFormatada = exibicaoData;
+
+                let hojeClass = formatarDataSQL(new Date()) === dataString ? 'dia-atual' : '';
+
+                grade.innerHTML += `
+                    <div class="agenda-col ${hojeClass}">
+                        <div class="agenda-header">
+                            <div class="dia-semana">${nomesDias[i]}</div>
+                            <div class="dia-data">${exibicaoData}</div>
+                        </div>
+                        <div class="os-container" id="col-${dataString}"></div>
+                    </div>
+                `;
+                diaCorrente.setDate(diaCorrente.getDate() + 1);
+            }
+
+            document.getElementById('labelSemana').innerText = `${dataInicioFormatada} até ${dataFimFormatada}`;
+            carregarAgendamentosBanco();
+        }
+
+        function mudarSemana(dias) {
+            dataBaseSemana.setDate(dataBaseSemana.getDate() + dias);
+            renderizarEstruturaColunas();
+        }
+
+        // BUSCA TODOS OS DADOS DETALHADOS NO SUPABASE
+        async function carregarAgendamentosBanco() {
             const { data: ordens } = await _supabase.from('ordens_servico').select('*');
             if(!ordens) return;
 
@@ -230,18 +285,22 @@
                     let badgeColor = 'badge-confirmado';
                     if(os.status === 'Viagem') badgeColor = 'badge-viagem';
                     if(os.status === 'Em Atendimento') badgeColor = 'badge-andamento';
-
-                    let clickEvent = '';
-                    if(os.status === 'Concluído' || os.status === 'Aguardando Peça') {
-                        clickEvent = `style="cursor:pointer;" onclick="abrirRelatorio('${os.id}')"`;
-                    }
+                    if(os.status === 'Concluído') badgeColor = 'badge-concluido';
 
                     colTarget.innerHTML += `
-                        <div class="os-card" ${clickEvent}>
-                            <div class="os-tecnico">${os.tecnico_responsavel}</div>
-                            <div class="os-cliente">${os.cliente.split('(')[0]}</div>
-                            <div class="os-info text-truncate">${os.instrucoes || ''}</div>
-                            <div class="os-badge ${badgeColor}">${os.status}</div>
+                        <div class="os-card" data-tecnico="${os.tecnico_responsavel}">
+                            <div class="os-top">
+                                <span class="os-number">${os.numero_os}</span>
+                                <span class="os-badge ${badgeColor}">${os.status}</span>
+                            </div>
+                            <div class="os-cliente">${os.cliente}</div>
+                            <div class="os-tecnico-tag">
+                                <i class="fa-solid fa-user-gear"></i> ${os.tecnico_responsavel}
+                            </div>
+                            <div class="os-desc">${os.instrucoes || 'Nenhuma especificação inserida.'}</div>
+                            <button class="os-action-btn" onclick="abrirRelatorio('${os.id}')">
+                                <i class="fa-solid fa-magnifying-glass-plus me-1"></i> Detalhes da Ordem
+                            </button>
                         </div>
                     `;
                 }
@@ -260,15 +319,15 @@
             }]);
             bootstrap.Modal.getInstance(document.getElementById('modalNovaOS')).hide();
             document.getElementById('formNovaOS').reset();
-            carregarGradeSemanal();
+            renderizarEstruturaColunas();
         });
 
         async function abrirRelatorio(id) {
             const { data: os } = await _supabase.from('ordens_servico').select('*').eq('id', id).single();
             if(os) {
                 document.getElementById('relModalCliente').innerText = os.cliente;
-                document.getElementById('relModalInstrucoes').innerText = os.instrucoes || '';
-                document.getElementById('relModalTexto').innerText = os.relatorio || 'Sem relatório técnico.';
+                document.getElementById('relModalInstrucoes').innerText = os.instrucoes || 'Sem instruções.';
+                document.getElementById('relModalTexto').innerText = os.relatorio || 'O técnico responsável ainda não transmitiu o relatório final desta obra.';
                 if(os.foto_url) {
                     document.getElementById('relModalAreaFoto').classList.remove('d-none');
                     document.getElementById('relModalLinkFoto').href = os.foto_url;
@@ -278,31 +337,25 @@
                 new bootstrap.Modal(document.getElementById('modalVerRelatorio')).show();
             }
         }
-        
+
         async function carregarDadosTecnico() {
             const lista = document.getElementById('listaOSTecnico');
-            if(!lista) return;
-            lista.innerHTML = '';
-            
+            if(!lista) return; lista.innerHTML = '';
             const { data: ordens } = await _supabase.from('ordens_servico').select('*').eq('tecnico_responsavel', usuarioLogado);
             if(!ordens || ordens.length === 0) {
-                lista.innerHTML = '<div class="col-12 text-center text-muted">Nenhum compromisso agendado para você.</div>';
+                lista.innerHTML = '<div class="col-12 text-center text-muted py-5">Nenhum compromisso agendado para o seu perfil.</div>';
                 return;
             }
-            
             ordens.forEach(os => {
                 if(os.status === 'Concluído') return;
-                
                 lista.innerHTML += `
                     <div class="col-md-6 col-lg-4">
-                        <div class="card shadow-sm border-0">
-                            <div class="card-body">
-                                <span class="badge bg-secondary mb-2">${os.numero_os}</span>
-                                <h5 class="fw-bold text-dark mb-1">${os.cliente}</h5>
-                                <p class="text-muted small mb-3">${os.instrucoes || 'Sem observações.'}</p>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-dark w-100 fw-bold" onclick="alert('Funcionalidade de relatório ativa no app técnico principal.')">Atualizar Status</button>
-                                </div>
+                        <div class="card shadow-sm border-0 rounded-3">
+                            <div class="card-body p-4">
+                                <span class="badge bg-dark mb-2">${os.numero_os}</span>
+                                <h5 class="fw-bold text-dark mb-2">${os.cliente}</h5>
+                                <p class="text-muted small mb-3">${os.instrucoes || ''}</p>
+                                <button class="btn btn-sm btn-outline-primary w-100 fw-bold" onclick="alert('Relatórios habilitados via painel mobile.')">Atualizar Atendimento</button>
                             </div>
                         </div>
                     </div>
