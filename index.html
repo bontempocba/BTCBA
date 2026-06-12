@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -17,11 +18,11 @@
         .nav-menu .nav-link.btn-sair { color: #dc2626; margin-top: 40px; }
         .nav-menu .nav-link.btn-sair:hover { background-color: #fef2f2; }
         
-        /* Grade da Agenda Estilo Solução */
+        /* Grade da Agenda */
         .agenda-grid { display: grid; grid-template-columns: repeat(7, minmax(150px, 1fr)); gap: 10px; overflow-x: auto; margin-top: 20px; }
         .agenda-col { background: #fff; border-radius: 12px; border: 1px solid #e5e7eb; min-height: 500px; padding: 10px; }
         .agenda-header { text-align: center; padding-bottom: 10px; border-bottom: 2px solid #f3f4f6; margin-bottom: 12px; }
-        .agenda-header .dia-semana { font-size: 11px; font-weight: 700; color: #9ca3af; text-uppercase: true; }
+        .agenda-header .dia-semana { font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; }
         .agenda-header .dia-data { font-size: 16px; font-weight: 800; color: #1f2937; }
         
         /* Cards Técnicos */
@@ -50,7 +51,7 @@
             <form id="formLogin">
                 <div class="mb-3 text-start">
                     <label class="form-label small fw-bold">Usuário</label>
-                    <input type="text" id="inputUser" class="form-control" placeholder="gestor ou tecnico" required>
+                    <input type="text" id="inputUser" class="form-control" placeholder="gestor ou nome do técnico" required>
                 </div>
                 <div class="mb-4 text-start">
                     <label class="form-label small fw-bold">Senha</label>
@@ -61,9 +62,8 @@
         </div>
     </div>
 
-    <!-- PAINEL GESTOR (ESTILO SOLUÇÃO AUTOMAÇÃO) -->
+    <!-- PAINEL GESTOR -->
     <div id="sectionGestor" class="hidden-section">
-        <!-- BARRA LATERAL -->
         <div class="sidebar">
             <div class="logo-space text-center">BONTEMPO</div>
             <div class="nav-menu">
@@ -74,9 +74,7 @@
             </div>
         </div>
 
-        <!-- CONTEÚDO PRINCIPAL -->
         <div class="main-content">
-            <!-- Topo com Filtros e Ações -->
             <div class="card p-3 border-0 shadow-sm mb-3">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                     <div class="d-flex align-items-center gap-2">
@@ -92,64 +90,15 @@
                 </div>
             </div>
 
-            <!-- GRADE SEMANAL (KANBAN) -->
+            <!-- GRADE SEMANAL -->
             <div class="agenda-grid">
-                <!-- SEGUNDA -->
-                <div class="agenda-col">
-                    <div class="agenda-header">
-                        <div class="dia-semana">SEGUNDA</div>
-                        <div class="dia-data">08/06</div>
-                    </div>
-                    <div id="col-2026-06-08"></div>
-                </div>
-                <!-- TERÇA -->
-                <div class="agenda-col">
-                    <div class="agenda-header">
-                        <div class="dia-semana">TERÇA</div>
-                        <div class="dia-data">09/06</div>
-                    </div>
-                    <div id="col-2026-06-09"></div>
-                </div>
-                <!-- QUARTA -->
-                <div class="agenda-col">
-                    <div class="agenda-header">
-                        <div class="dia-semana">QUARTA</div>
-                        <div class="dia-data">10/06</div>
-                    </div>
-                    <div id="col-2026-06-10"></div>
-                </div>
-                <!-- QUINTA -->
-                <div class="agenda-col">
-                    <div class="agenda-header">
-                        <div class="dia-semana">QUINTA</div>
-                        <div class="dia-data">11/06</div>
-                    </div>
-                    <div id="col-2026-06-11"></div>
-                </div>
-                <!-- SEXTA -->
-                <div class="agenda-col">
-                    <div class="agenda-header">
-                        <div class="dia-semana">SEXTA</div>
-                        <div class="dia-data">12/06</div>
-                    </div>
-                    <div id="col-2026-06-12"></div>
-                </div>
-                <!-- SÁBADO -->
-                <div class="agenda-col">
-                    <div class="agenda-header">
-                        <div class="dia-semana">SÁBADO</div>
-                        <div class="dia-data">13/06</div>
-                    </div>
-                    <div id="col-2026-06-13"></div>
-                </div>
-                <!-- DOMINGO -->
-                <div class="agenda-col">
-                    <div class="agenda-header">
-                        <div class="dia-semana">DOMINGO</div>
-                        <div class="dia-data">14/06</div>
-                    </div>
-                    <div id="col-2026-06-14"></div>
-                </div>
+                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">SEGUNDA</div><div class="dia-data">08/06</div></div><div id="col-2026-06-08"></div></div>
+                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">TERÇA</div><div class="dia-data">09/06</div></div><div id="col-2026-06-09"></div></div>
+                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">QUARTA</div><div class="dia-data">10/06</div></div><div id="col-2026-06-10"></div></div>
+                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">QUINTA</div><div class="dia-data">11/06</div></div><div id="col-2026-06-11"></div></div>
+                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">SEXTA</div><div class="dia-data">12/06</div></div><div id="col-2026-06-12"></div></div>
+                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">SÁBADO</div><div class="dia-data">13/06</div></div><div id="col-2026-06-13"></div></div>
+                <div class="agenda-col"><div class="agenda-header"><div class="dia-semana">DOMINGO</div><div class="dia-data">14/06</div></div><div id="col-2026-06-14"></div></div>
             </div>
         </div>
     </div>
@@ -183,14 +132,14 @@
                     <div class="col-12">
                         <label class="form-label small fw-bold">Técnico Responsável</label>
                         <select id="novaOSTecnico" class="form-select" required>
-                            <option value="Rafael Souza">Rafael Souza</option>
-                            <option value="Luiz Fabrício">Luiz Fabrício</option>
-                            <option value="Ênio Oliveira">Ênio Oliveira</option>
+                            <option value="Wennyson">Wennyson</option>
+                            <option value="Tio Viny">Tio Viny</option>
+                            <option value="Lucinei">Lucinei</option>
                         </select>
                     </div>
                     <div class="col-12">
                         <label class="form-label small fw-bold">Cliente / Endereço</label>
-                        <input type="text" id="novaOSCliente" class="form-control" placeholder="Nome do cliente e detalhes" required>
+                        <input type="text" id="novaOSCliente" class="form-control" placeholder="Nome do cliente" required>
                     </div>
                     <div class="col-12">
                         <label class="form-label small fw-bold">Especificações do Serviço</label>
@@ -220,7 +169,7 @@
                     <p class="mb-2"><strong>Relatório do Técnico:</strong></p>
                     <div class="p-3 bg-light rounded small text-muted border mb-3" id="relModalTexto"></div>
                     <div id="relModalAreaFoto" class="text-center d-none">
-                        <a id="relModalLinkFoto" href="#" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-image"></i> Abrir Imagem da Obra</a>
+                        <a id="relModalLinkFoto" href="#" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-image"></i> Abrir Imagem</a>
                     </div>
                 </div>
             </div>
@@ -237,33 +186,40 @@
 
         document.getElementById('formLogin').addEventListener('submit', function(e) {
             e.preventDefault();
-            const user = document.getElementById('inputUser').value.trim();
+            const user = document.getElementById('inputUser').value.trim().toLowerCase();
+            
             if(user === 'gestor') {
                 usuarioLogado = 'Gestor';
                 document.getElementById('sectionLogin').classList.add('hidden-section');
                 document.getElementById('sectionGestor').classList.remove('hidden-section');
                 carregarGradeSemanal();
-            } else if (user === 'tecnico') {
-                usuarioLogado = 'Rafael Souza';
-                document.getElementById('sectionLogin').classList.add('hidden-section');
-                document.getElementById('sectionTecnico').classList.remove('hidden-section');
-                carregarDadosTecnico();
-            } else {
+            } 
+            else if (user === 'wennyson') {
+                usuarioLogado = 'Wennyson';
+                removerECarregarTecnico();
+            } else if (user === 'tio viny' || user === 'tioviny') {
+                usuarioLogado = 'Tio Viny';
+                removerECarregarTecnico();
+            } else if (user === 'lucinei') {
+                usuarioLogado = 'Lucinei';
+                removerECarregarTecnico();
+            }
+            else {
                 document.getElementById('erroLogin').classList.remove('d-none');
             }
         });
 
-        function logout() {
-            location.reload();
+        function removerECarregarTecnico() {
+            document.getElementById('sectionLogin').classList.add('hidden-section');
+            document.getElementById('sectionTecnico').classList.remove('hidden-section');
+            carregarDadosTecnico();
         }
 
-        // MONTA A GRADE SEMANAL ESTILO KANBAN
+        function logout() { location.reload(); }
+
         async function carregarGradeSemanal() {
             const dias = ['2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-12', '2026-06-13', '2026-06-14'];
-            dias.forEach(d => {
-                const el = document.getElementById(`col-${d}`);
-                if(el) el.innerHTML = '';
-            });
+            dias.forEach(d => { const el = document.getElementById(`col-${d}`); if(el) el.innerHTML = ''; });
 
             const { data: ordens } = await _supabase.from('ordens_servico').select('*');
             if(!ordens) return;
@@ -282,7 +238,7 @@
 
                     colTarget.innerHTML += `
                         <div class="os-card" ${clickEvent}>
-                            <div class="os-tecnico">${os.tecnico_responsavel.split(' ')[0]}</div>
+                            <div class="os-tecnico">${os.tecnico_responsavel}</div>
                             <div class="os-cliente">${os.cliente.split('(')[0]}</div>
                             <div class="os-info text-truncate">${os.instrucoes || ''}</div>
                             <div class="os-badge ${badgeColor}">${os.status}</div>
@@ -321,6 +277,37 @@
                 }
                 new bootstrap.Modal(document.getElementById('modalVerRelatorio')).show();
             }
+        }
+        
+        async function carregarDadosTecnico() {
+            const lista = document.getElementById('listaOSTecnico');
+            if(!lista) return;
+            lista.innerHTML = '';
+            
+            const { data: ordens } = await _supabase.from('ordens_servico').select('*').eq('tecnico_responsavel', usuarioLogado);
+            if(!ordens || ordens.length === 0) {
+                lista.innerHTML = '<div class="col-12 text-center text-muted">Nenhum compromisso agendado para você.</div>';
+                return;
+            }
+            
+            ordens.forEach(os => {
+                if(os.status === 'Concluído') return;
+                
+                lista.innerHTML += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body">
+                                <span class="badge bg-secondary mb-2">${os.numero_os}</span>
+                                <h5 class="fw-bold text-dark mb-1">${os.cliente}</h5>
+                                <p class="text-muted small mb-3">${os.instrucoes || 'Sem observações.'}</p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-dark w-100 fw-bold" onclick="alert('Funcionalidade de relatório ativa no app técnico principal.')">Atualizar Status</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
         }
     </script>
 </body>
